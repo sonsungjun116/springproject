@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="boardns">
+
+	<!-- 글작성 -->
+	<insert id="insert" parameterType="board">
+		insert into myboard values(myboard_seq.nextval,#{writer},
+							#{passwd},#{subject},#{content},0,sysdate)
+	</insert>
+	
+	<!-- 글갯수 -->
+	<select id="count" resultType="int">
+		select count(*) from myboard
+	</select>
+	
+	<!-- 중간에 있는 데이터를 상용하기 위해서는 별칭을 주어야한다 그래서 rnum을 지정 -->
+	<!-- 글목록 -->
+	<select id="list" parameterType="int" resultType="board">
+		<![CDATA[
+		select * from (select rownum rnum, board.* from ( 
+		select * from myboard order by no desc) board )
+		where rnum >= ((#{page}-1) * 10 + 1) and rnum <= (#{page} * 10)	
+		]]>
+	</select>
+	
+	<!-- 조회수 증가 -->
+	<update id="hit" parameterType="int">
+		update myboard set readcount=readcount+1 where no=#{no}
+	</update>
+	
+	<!-- 상세 정보 구하기 -->
+	<select id="content" parameterType="int" resultType="board">
+		select * from myboard where no = #{no}
+	</select>
+	
+	<!-- 글수정 -->
+	<update id="update" parameterType="board">
+		update myboard set writer=#{writer}, subject=#{subject},
+		content=#{content}, register=sysdate where no=#{no}
+	</update>
+	
+	<!-- 글삭제 -->
+	<delete id="delete" parameterType="int">
+		delete from myboard where no = #{no}
+	</delete>
+	
+</mapper>

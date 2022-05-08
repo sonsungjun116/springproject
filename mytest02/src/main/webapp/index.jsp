@@ -10,10 +10,7 @@
 
 <script>
 	location.href="test.do";
-//	location.href="boardlist.do";
-	
+
 </script>
-
-
 </body>
 </html>
